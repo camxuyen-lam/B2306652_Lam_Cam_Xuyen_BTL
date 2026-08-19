@@ -99,3 +99,30 @@ export default {
   }
 };
 </script>
+<style>
+.btn-orange {
+  background-color: #ff8c5a !important; 
+  color: white !important;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px; 
+  transition: all 0.3s ease; 
+}
+
+.btn-orange:hover {
+  background-color: #e67e50 !important; 
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 12px rgba(255, 140, 90, 0.4) !important; 
+  color: white !important;
+}
+
+.btn-orange:active {
+  transform: translateY(0);
+}
+
+.custom-btn {
+  width: 100%; 
+  text-transform: uppercase; 
+  letter-spacing: 1px;
+}
+</style>

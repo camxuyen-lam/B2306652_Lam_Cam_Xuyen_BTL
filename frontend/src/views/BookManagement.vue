@@ -89,7 +89,7 @@ export default {
         this.showModal = false; this.refreshList();
       } catch (e) { alert("Lỗi lưu sách"); }
     },
-    async confirmDelete(id) { if (confirm("Bạn có chắc chắn muốn xóa cuốn sách này không?")) { await BookService.delete(id); this.refreshList(); } }
+    async confirmDelete(id) { if (confirm("")) { await BookService.delete(id); this.refreshList(); } }
   },
   mounted() { this.refreshList(); }
 };

@@ -27,6 +27,9 @@ async userConfirmPayment(id) {
 async adminConfirmFine(id) {
     return (await this.api.put(`/${id}/admin-confirm`)).data;
 }
+async sendFeedback(id, data) {
+    return (await this.api.put(`/${id}/feedback`, data)).data;
+}
 }
 
 export default new BorrowService();

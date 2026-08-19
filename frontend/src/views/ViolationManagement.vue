@@ -1,6 +1,8 @@
 <template>
   <div class="violation-mgmt">
-    <h3 class="mb-4">🚫 Danh sách vi phạm & Tiền phạt</h3>
+    <h3 class="mb-4 text-danger font-weight-bold">
+      <i class="fas fa-exclamation-triangle"></i>
+       Danh sách vi phạm & Tiền phạt</h3>
     
     <div class="row mb-4">
       <div class="col-md-4">
@@ -59,7 +61,7 @@
         </table>
         
         <div v-if="violationList.length === 0" class="text-center py-5">
-          <p class="text-muted">Hiện tại chưa có dữ liệu vi phạm nhe bà! 😂</p>
+          <p class="text-muted">Hiện tại chưa có dữ liệu vi phạm nhe bạn! 😂</p>
         </div>
       </div>
     </div>
@@ -97,7 +99,7 @@ export default {
       } catch (e) { console.log(e); }
     },
     async handlePayment(id) {
-      if (confirm("Bà xác nhận đã thu tiền của độc giả này nhe?")) {
+      if (confirm("Bạn xác nhận đã thu tiền của độc giả này nhe?")) {
         try {
           await BorrowService.adminConfirmFine(id);
           alert("Xác nhận đã thu tiền thành công! 💰");

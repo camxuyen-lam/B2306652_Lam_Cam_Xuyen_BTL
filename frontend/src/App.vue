@@ -51,7 +51,6 @@
           </template>
 
           <router-link v-else-if="!currentUser" to="/login" class="btn-login-xuyen">Đăng nhập</router-link>
-
           <router-link v-else to="/admin/dashboard" class="btn btn-dark btn-sm px-3">Quay lại Quản lý</router-link>
         </div>
       </div>
@@ -60,7 +59,7 @@
     <div id="content" :class="{ 'guest-padding': !isAdmin && $route.path !== '/login' }">
       <nav v-if="isAdmin" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
         <div class="container-fluid">
-  <div class="ml-auto d-flex align-items-center" v-if="currentUser">
+          <div class="ml-auto d-flex align-items-center" v-if="currentUser">
             <span class="mr-3 small">Chào admin, <strong>{{ currentUser.name }}</strong></span>
             <a href="#" class="text-danger" @click.prevent="handleLogout"><i class="fas fa-sign-out-alt fa-lg"></i></a>
           </div>
@@ -72,14 +71,20 @@
       </div>
 
       <AppFooter v-if="!isAdmin && $route.path !== '/login' && $route.path !== '/register'" />
+      <ChatBot v-if="!isAdmin && $route.path !== '/login' && $route.path !== '/register'" />
     </div>
   </div>
 </template>
 
 <script>
 import AppFooter from "@/components/AppFooter.vue";
+import ChatBot from './components/ChatBot.vue';
+
 export default {
-  components: { AppFooter },
+  components: { 
+    AppFooter,
+    ChatBot 
+  },
   data() {
     return { currentUser: null, cartCount: 0 }
   },
@@ -87,14 +92,17 @@ export default {
     isAdmin() { return this.$route.path.startsWith('/admin'); }
   },
   methods: {
-    updateUser() {
-      const user = localStorage.getItem("user");
-      this.currentUser = user ? JSON.parse(user) : null;
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      this.cartCount = cart.length; 
-    },
+   updateUser() {
+    console.log("Hệ thống đang đếm lại giỏ hàng..."); 
+    const user = localStorage.getItem("user");
+    this.currentUser = user ? JSON.parse(user) : null;
+
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    this.cartCount = cart.length; 
+    console.log("Số lượng hiện tại là:", this.cartCount);
+  },
     handleLogout() {
-      if (confirm("Bà có chắc muốn thoát không?")) {
+      if (confirm("Bạn có chắc muốn thoát không?")) {
         localStorage.removeItem("user");
         this.updateUser();
         this.$router.push("/");
@@ -103,10 +111,15 @@ export default {
   },
   mounted() { 
     this.updateUser(); 
-    window.addEventListener('cart-updated', this.updateUser);
+  window.addEventListener('cart-updated', () => {
+    this.updateUser();
+  });  },
+  beforeUnmount() { 
+    window.removeEventListener('cart-updated', this.updateUser); 
   },
-  beforeUnmount() { window.removeEventListener('cart-updated', this.updateUser); },
-  watch: { '$route'() { this.updateUser(); } }
+  watch: { 
+    '$route'() { this.updateUser(); } 
+  }
 }
 </script>
 

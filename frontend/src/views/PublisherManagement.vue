@@ -101,7 +101,7 @@ export default {
       this.showModal = false;
     },
     confirmDelete(id) {
-      if (confirm("Bà có chắc muốn xóa NXB này không?")) {
+      if (confirm("Bạn có chắc muốn xóa NXB này không?")) {
         alert("Đã xóa NXB có ID: " + id);
       }
     }

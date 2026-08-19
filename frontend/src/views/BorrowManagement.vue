@@ -7,7 +7,7 @@
     <div class="card shadow-sm border-0" style="border-radius: 15px;">
       <div class="card-body p-0">
         <table class="table table-striped mb-0">
-          <thead class="bg-orange text-white border">
+          <thead class="bg-orange text-white">
             <tr>
               <th>Độc giả</th>
               <th>Tên sách</th>
@@ -18,7 +18,7 @@
           </thead>
           <tbody>
             <tr v-for="item in borrowList" :key="item._id">
-              <td><strong>{{ item.MaDocGia || 'Ẩn danh' }}</strong></td>
+              <td><strong>{{ item.MaDocGia }}</strong></td>
               <td>{{ item.TenSach }}</td>
               <td>{{ new Date(item.NgayMuon).toLocaleDateString('vi-VN') }}</td>
               <td>
@@ -26,28 +26,50 @@
               </td>
               <td class="text-center">
                 <div v-if="item.TrangThai === 'ChoDuyet'">
-                  <button class="btn btn-success btn-sm px-3 mr-2" @click="handleApprove(item._id)">
-                    Duyệt
-                  </button>
-                  <button class="btn btn-outline-danger btn-sm px-3" @click="handleReject(item._id)">
-                    Từ chối
-                  </button>
+                  <button class="btn btn-success btn-sm px-3 mr-2" @click="handleApprove(item._id)">Duyệt</button>
+                  <button class="btn btn-outline-danger btn-sm px-3" @click="handleReject(item._id)">Từ chối</button>
                 </div>
 
                 <div v-else-if="item.TrangThai === 'DangMuon' || item.TrangThai === 'TreHen'">
-                  <button class="btn btn-primary btn-sm px-3 mr-2" @click="handleReturn(item._id)">
-                    Xác nhận trả
-                  </button>
-                  <button class="btn btn-danger btn-sm px-3" @click="handleLost(item._id)">
-                    Báo mất
+                  <button class="btn btn-primary btn-sm px-3 mr-2" @click="handleReturn(item._id)">Xác nhận trả</button>
+                  <button class="btn btn-danger btn-sm px-3" @click="handleLost(item._id)">Báo mất</button>
+                </div>
+
+                 <div v-else-if="item.TrangThai === 'ChoXacNhanTien'">
+                  <button class="btn btn-warning btn-sm px-3 text-white font-weight-bold" @click="handleConfirmFine(item._id)">
+                    Xác nhận đã nhận tiền
                   </button>
                 </div>
 
-                <span v-else class="text-muted small italic">Đã xử lý xong</span>
+                <div v-if="item.GopY" class="mt-2">
+                  <button class="btn btn-info btn-sm px-3" @click="viewFeedback(item)">
+                    <i class="fas fa-comment-dots"></i> Xem góp ý
+                  </button>
+                </div>
+
+                <span v-if="item.TrangThai === 'DaTra' || item.TrangThai === 'DaDongPhat'" class="text-success small">Hoàn tất</span>
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <div v-if="showFeedbackModal" class="modal-overlay">
+      <div class="modal-content-custom shadow-lg p-4 text-center">
+        <h5 class="font-weight-bold text-orange mb-3">NỘI DUNG GÓP Ý</h5>
+        <div class="text-left bg-light p-3 rounded mb-3">
+          <p><strong>Lời nhắn:</strong> {{ currentFeedback.GopY }}</p>
+        </div>
+        
+        <div v-if="currentFeedback.HinhAnhMinhChung">
+          <p class="small font-weight-bold text-danger">Hình ảnh minh chứng sách hỏng:</p>
+          <img :src="currentFeedback.HinhAnhMinhChung" class="img-fluid rounded shadow-sm border" style="max-height: 300px;">
+        </div>
+
+        <div class="mt-4">
+          <button class="btn btn-secondary btn-block" @click="showFeedbackModal = false">Đóng</button>
+        </div>
       </div>
     </div>
   </div>
@@ -57,64 +79,54 @@
 import BorrowService from "@/services/borrow.service";
 
 export default {
-  data() { return { borrowList: [] } },
+  data() {
+    return {
+      borrowList: [],
+      showFeedbackModal: false,
+      currentFeedback: {}
+    }
+  },
   methods: {
     async refreshList() {
       try {
         this.borrowList = await BorrowService.getAll();
-      } catch (e) { console.log("Lỗi tải danh sách:", e); }
+      } catch (e) { console.log(e); }
+    },
+    async handleConfirmFine(id) {
+      if(confirm("Bạn xác nhận đã nhận được tiền chuyển khoản rồi nhe?")) {
+        await BorrowService.adminConfirmFine(id); 
+        alert("Đã xác nhận xong! Độc giả này đã sạch nợ. 😂");
+        this.refreshList();
+      }
+    },
+    viewFeedback(item) {
+      this.currentFeedback = item;
+      this.showFeedbackModal = true;
     },
     async handleApprove(id) {
-      if(confirm("Bạn duyệt cho mượn nhe?")) {
-        try {
-          await BorrowService.approveBorrow(id);
-          alert("Đã duyệt thành công! 📖");
-          this.refreshList();
-        } catch (e) { alert("Lỗi khi duyệt!"); }
-      }
-    },
-    async handleReject(id) {
-      if(confirm("Bạn từ chối đơn này hả? Sách sẽ được cộng lại vào kho nhe.")) {
-        try {
-          await BorrowService.rejectBorrow(id);
-          alert("Đã từ chối và hoàn trả sách! ❌");
-          this.refreshList();
-        } catch (e) { alert("Lỗi khi từ chối!"); }
-      }
+      await BorrowService.approveBorrow(id);
+      this.refreshList();
     },
     async handleReturn(id) {
-      if(confirm("Xác nhận đã nhận lại sách?")) {
-        try {
-          await BorrowService.returnBook(id);
-          alert("Sách đã về kho an toàn! ✅");
-          this.refreshList();
-        } catch (e) { alert("Lỗi khi trả sách!"); }
-      }
+      await BorrowService.returnBook(id);
+      this.refreshList();
     },
     async handleLost(id) {
-      if(confirm("Bạn xác nhận sinh viên này làm mất sách? Phạt 200k nhe!")) {
-        try {
-          await BorrowService.reportLost(id);
-          alert("Đã ghi nhận mất sách! 🚫");
-          this.refreshList();
-        } catch (e) { alert("Lỗi khi báo mất!"); }
-      }
+      await BorrowService.reportLost(id);
+      this.refreshList();
     },
     getStatusClass(status) {
       if (status === 'ChoDuyet') return 'badge badge-warning p-2 text-white';
       if (status === 'DangMuon') return 'badge badge-primary p-2';
-      if (status === 'DaTra') return 'badge badge-success p-2';
-      if (status === 'TreHen') return 'badge badge-danger p-2';
-      return 'badge badge-secondary p-2';
+      if (status === 'ChoXacNhanTien') return 'badge badge-info p-2 text-white';
+      if (status === 'DaTra' || status === 'DaDongPhat') return 'badge badge-success p-2';
+      return 'badge badge-danger p-2';
     },
     getStatusText(status) {
       const texts = {
-        'ChoDuyet': '⌛ Chờ duyệt',
-        'DangMuon': '📖 Đang mượn',
-        'DaTra': '✅ Đã trả',
-        'TreHen': '🔴 Trễ hẹn',
-        'MatSach': '❌ Mất sách',
-        'TuChoi': '🚫 Đã từ chối'
+        'ChoDuyet': '⌛ Chờ duyệt', 'DangMuon': '📖 Đang mượn', 'DaTra': '✅ Đã trả',
+        'TreHen': '🔴 Trễ hẹn', 'MatSach': '❌ Mất sách', 'ChoXacNhanTien': '💰 Chờ tiền',
+        'DaDongPhat': '🎉 Hoàn tất', 'TuChoi': '🚫 Đã từ chối'
       };
       return texts[status] || status;
     }
@@ -122,3 +134,9 @@ export default {
   mounted() { this.refreshList(); }
 }
 </script>
+
+<style scoped>
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+.modal-content-custom { background: white; width: 500px; border-radius: 20px; }
+.text-orange { color: #ff7f50; }
+</style>

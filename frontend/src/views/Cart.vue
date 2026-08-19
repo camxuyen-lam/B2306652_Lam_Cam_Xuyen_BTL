@@ -92,6 +92,7 @@ export default {
           this.cartItems.splice(index, 1);
           localStorage.setItem("cart", JSON.stringify(this.cartItems));
           window.dispatchEvent(new CustomEvent('cart-updated'));
+          
           this.$router.push("/profile");
         } catch (error) {
           alert("Lỗi rồi bạn ơi!");
@@ -114,7 +115,7 @@ export default {
         alert("Đã gửi yêu cầu mượn tất cả thành công! 🎉");
         localStorage.removeItem("cart");
         window.dispatchEvent(new CustomEvent('cart-updated'));
-        this.$router.push("/profile");
+        this.$router.push("/history");
       } catch (error) {
         alert("Lỗi rồi bạn ơi!");
       }
