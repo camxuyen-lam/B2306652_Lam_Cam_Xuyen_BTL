@@ -1,7 +1,7 @@
 <template>
   <div class="reader-management"> 
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h3>
+      <h3 class="text-orange">
         <i class="fas fa-users"></i>
          Quản lý độc giả</h3>
       <button class="btn btn-success" @click="openAddModal"><i class="fas fa-user-plus"></i> Thêm độc giả</button>

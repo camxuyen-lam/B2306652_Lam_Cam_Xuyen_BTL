@@ -46,6 +46,7 @@
                     <select class="form-control custom-input" v-model="reader.Phai">
                       <option value="Nam">Nam</option>
                       <option value="Nữ">Nữ</option>
+                      <option value="Khác">Khác</option>
                     </select>
                   </div>
                 </div>

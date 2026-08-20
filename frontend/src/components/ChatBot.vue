@@ -22,7 +22,7 @@
         </div>
 
         <div class="chat-footer">
-          <input v-model="userInput" @keyup.enter="sendMessage" placeholder="Hỏi tui đi bà..." />
+          <input v-model="userInput" @keyup.enter="sendMessage" placeholder="Hỏi tui đi nè..." />
           <button @click="sendMessage"><i class="fas fa-paper-plane"></i></button>
         </div>
       </div>

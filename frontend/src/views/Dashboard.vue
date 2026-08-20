@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <h3 class="mb-4 font-weight-bold">
+    <h3 class="mb-4 font-weight-bold text-orange">
       <i class="fas fa-chart-line text-orange mr-0"></i>
        Báo cáo thống kê</h3>
   

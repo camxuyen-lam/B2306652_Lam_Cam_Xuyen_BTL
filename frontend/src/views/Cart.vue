@@ -1,7 +1,7 @@
 <template>
   <div class="container py-5">
     <h3 class="font-weight-bold mb-4">
-      <i class="fas fa-shopping-basket text-orange mr-2"></i> Giỏ hàng của tui
+      <i class="fas fa-shopping-basket text-orange mr-2"></i> Giỏ hàng của tôi
     </h3>
 
     <div v-if="cartItems.length > 0" class="card border-0 shadow-sm p-4 custom-card">
@@ -93,7 +93,7 @@ export default {
           localStorage.setItem("cart", JSON.stringify(this.cartItems));
           window.dispatchEvent(new CustomEvent('cart-updated'));
           
-          this.$router.push("/profile");
+          this.$router.push("/history");
         } catch (error) {
           alert("Lỗi rồi bạn ơi!");
         }

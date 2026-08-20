@@ -21,7 +21,6 @@ const routes = [
      { path: "/history", name: "borrow-history", component: BorrowHistory },
     { path: "/cart", name: "cart", component: () => import("@/views/Cart.vue") },
     { path: "/settings", name: "settings", component: () => import("@/views/Settings.vue") },
-
     { path: "/admin/dashboard", name: "dashboard", component: Dashboard },
     { path: "/admin/books", name: "books", component: BookManagement },
     { path: "/admin/categories", name: "categories", component: CategoryManagement },

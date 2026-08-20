@@ -1,6 +1,6 @@
 <template>
   <div class="borrow-mgmt">
-    <h3 class="mb-4">
+    <h3 class="mb-4 text-orange">
       <i class="fas fa-exchange-alt"></i>
        Duyệt đơn mượn & Trả sách</h3>
     
